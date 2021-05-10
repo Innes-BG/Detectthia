@@ -123,9 +123,8 @@ def get_landmarks_from_image(image, step=30, pca=True):
 
 
 
-#If mirro two sets of landmarks are created for each image, original and mirrored
 def get_landmarks_batch(directory, filetype, results_file, correspondences_file, step_value, pca=True, mirror=True):
-    '''Calculates landmarks for all images in a diresctory and generates 
+    '''Calculates landmarks for all images in a diresctory and generates a mophologika file'''
     
     #tic_ini = time.perf_counter()
 
@@ -149,11 +148,18 @@ def get_landmarks_batch(directory, filetype, results_file, correspondences_file,
                 landmarks=get_landmarks_from_image(directory + '/' + sf+ '/' + file, step_value, pca)
                 landmarks_list.append(landmarks)
                 if mirror:
-                    names.append(sf+str(i)+'_m')
+                    names.append(sf+str(i)+'_mx')
+                    names.append(sf+str(i)+'_my')
                     labels.append(sf)
-                    landmarks_mirror=np.transpose([np.transpose(landmarks)[0],-np.transpose(landmarks)[1]])
-                    landmarks_mirror = sort_points_by_angle(landmarks_mirror)     
-                    landmarks_list.append(landmarks_mirror)
+                    labels.append(sf)
+                    
+                    #If mirro three sets of landmarks are created for each image, original, mirrored in x and mirrored in y
+                    landmarks_mirror_x=np.transpose([-np.transpose(landmarks)[0],np.transpose(landmarks)[1]])
+                    landmarks_mirror_x = sort_points_by_angle(landmarks_mirror_x)     
+                    landmarks_list.append(landmarks_mirror_x)
+                    landmarks_mirror_y=np.transpose([np.transpose(landmarks)[0],-np.transpose(landmarks)[1]])
+                    landmarks_mirror_y = sort_points_by_angle(landmarks_mirror_y)     
+                    landmarks_list.append(landmarks_mirror_y)
 
                 i+=1
                 
@@ -200,7 +206,7 @@ def get_landmarks_batch(directory, filetype, results_file, correspondences_file,
         
         
 '''Directory is a folder with one subfolder per label, the names of the subfolders are used as label'''  
-directory='D:/USAL/Detectthia/Morfometrias/Pruebas_morfo/Images3'    
+directory='D:/USAL/Detectthia/Morfometrias/Pruebas_morfo/Images2'    
 filetype='png'
 correspondences_file= directory +'/correspondence.txt'
 
