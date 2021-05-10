@@ -24,6 +24,12 @@ def sort_points_by_angle(landmarks):
     return landmarks
 
 def get_landmarks_from_image(image, step=30, pca=True):
+    '''Loads image and calculates the landmarks of skin lesion at different angles 
+    -image: as a mask, white pixel for lesion
+    -step: angle step between landmarks (degrees). Ej. step=10->36 landmarks per image
+    -pca: whether principal components transformation is made to orientate the images
+    RETURNS:
+    -list of extracted landmarks'''
     print('Start')
     tic = time.perf_counter()
     img = cv2.imread(image,0)        
@@ -40,7 +46,6 @@ def get_landmarks_from_image(image, step=30, pca=True):
     # plt.gca().set_aspect('equal', adjustable='box')
     # plt.show()
     # plt.close()
-    
     
     #Principal components
     pts1=np.transpose([x,y])
@@ -120,7 +125,9 @@ def get_landmarks_from_image(image, step=30, pca=True):
 
 #If mirro two sets of landmarks are created for each image, original and mirrored
 def get_landmarks_batch(directory, filetype, results_file, correspondences_file, step_value, pca=True, mirror=True):
-    tic_ini = time.perf_counter()
+    '''Calculates landmarks for all images in a diresctory and generates 
+    
+    #tic_ini = time.perf_counter()
 
 
     subfolders=(next(os.walk(directory))[1])
@@ -188,8 +195,8 @@ def get_landmarks_batch(directory, filetype, results_file, correspondences_file,
     cor.close()
         
             
-    toc_fin = time.perf_counter()
-    print('Time for ' +str(len(names)) + ' images and ' + str(step_value) + 'º step angle:' + str(round(toc_fin - tic_ini,0)) + ' seconds')        
+    #toc_fin = time.perf_counter()
+    #print('Time for ' +str(len(names)) + ' images and ' + str(step_value) + 'º step angle:' + str(round(toc_fin - tic_ini,0)) + ' seconds')        
         
         
 '''Directory is a folder with one subfolder per label, the names of the subfolders are used as label'''  
