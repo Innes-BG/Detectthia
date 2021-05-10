@@ -139,27 +139,29 @@ def get_landmarks_batch(directory, filetype, results_file, correspondences_file,
     for sf in subfolders:
         files = os.listdir(directory + '/' + sf)
         label=sf
-        for file in files:
-            if file.endswith(filetype):
-                filenames.append(file)
-                names.append(sf+str(i))
-                names_cor.append(sf+str(i))#Only for correspondence file, not affected by mirroring
-                labels.append(sf)
-                landmarks=get_landmarks_from_image(directory + '/' + sf+ '/' + file, step_value, pca)
-                landmarks_list.append(landmarks)
-                if mirror:
-                    names.append(sf+str(i)+'_mx')
-                    names.append(sf+str(i)+'_my')
+        for img_f in files:#Each image has its own folder
+            img_folders = os.listdir(directory + '/' + sf + '/' + img_f +'/')
+            for img in img_folders:
+                if img.endswith('mask.' + filetype):
+                    filenames.append(img)
+                    names.append(sf+str(i))
+                    names_cor.append(sf+str(i))#Only for correspondence file, not affected by mirroring
                     labels.append(sf)
-                    labels.append(sf)
-                    
-                    #If mirro three sets of landmarks are created for each image, original, mirrored in x and mirrored in y
-                    landmarks_mirror_x=np.transpose([-np.transpose(landmarks)[0],np.transpose(landmarks)[1]])
-                    landmarks_mirror_x = sort_points_by_angle(landmarks_mirror_x)     
-                    landmarks_list.append(landmarks_mirror_x)
-                    landmarks_mirror_y=np.transpose([np.transpose(landmarks)[0],-np.transpose(landmarks)[1]])
-                    landmarks_mirror_y = sort_points_by_angle(landmarks_mirror_y)     
-                    landmarks_list.append(landmarks_mirror_y)
+                    landmarks=get_landmarks_from_image(directory + '/' + sf+ '/' + img_f + '/' + img, step_value, pca)
+                    landmarks_list.append(landmarks)
+                    if mirror:
+                        names.append(sf+str(i)+'_mx')
+                        names.append(sf+str(i)+'_my')
+                        labels.append(sf)
+                        labels.append(sf)
+                        
+                        #If mirro three sets of landmarks are created for each image, original, mirrored in x and mirrored in y
+                        landmarks_mirror_x=np.transpose([-np.transpose(landmarks)[0],np.transpose(landmarks)[1]])
+                        landmarks_mirror_x = sort_points_by_angle(landmarks_mirror_x)     
+                        landmarks_list.append(landmarks_mirror_x)
+                        landmarks_mirror_y=np.transpose([np.transpose(landmarks)[0],-np.transpose(landmarks)[1]])
+                        landmarks_mirror_y = sort_points_by_angle(landmarks_mirror_y)     
+                        landmarks_list.append(landmarks_mirror_y)
 
                 i+=1
                 
@@ -205,8 +207,10 @@ def get_landmarks_batch(directory, filetype, results_file, correspondences_file,
     #print('Time for ' +str(len(names)) + ' images and ' + str(step_value) + 'º step angle:' + str(round(toc_fin - tic_ini,0)) + ' seconds')        
         
         
-'''Directory is a folder with one subfolder per label, the names of the subfolders are used as label'''  
-directory='D:/USAL/Detectthia/Morfometrias/Pruebas_morfo/Images2'    
+'''Same as get_landmarks but adapted for dermofit file system
+Directory is a folder with one subfolder per label, the names of the subfolders are used as label
+There is another subfolder for image with th image itself and the mask, with the same name + mask'''  
+directory='D:/USAL/Detectthia/Morfometrias/Pruebas_morfo/Images_dermofit'    
 filetype='png'
 correspondences_file= directory +'/correspondence.txt'
 
